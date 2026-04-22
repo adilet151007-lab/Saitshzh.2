@@ -1,64 +1,196 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="kk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ты в пузыре?</title>
-  <link rel="stylesheet" href="bubble.css">
+  <title>Сен көпіршікте ме?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050810; --surface: #0d1220; --surface2: #111827;
+      --accent: #4f7cff; --accent2: #ff4f7c; --accent3: #4fffb0;
+      --text: #e8eaf6; --muted: #4a5568; --border: rgba(255,255,255,0.07);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Onest', Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px);
+      opacity: 0.18; pointer-events: none; z-index: 0;
+      animation: drift 14s ease-in-out infinite alternate;
+    }
+    .orb-1 { width:400px;height:400px;background:var(--accent);top:-120px;left:-120px; }
+    .orb-2 { width:300px;height:300px;background:var(--accent2);bottom:-80px;right:-80px;animation-delay:-5s; }
+    .orb-3 { width:200px;height:200px;background:var(--accent3);top:40%;left:60%;animation-delay:-9s; }
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(30px,20px) scale(1.08); }
+    }
+    .wrapper { position:relative;z-index:1;max-width:720px;margin:0 auto;padding:60px 24px 80px; }
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeUp 0.5s ease forwards; }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .hero-eyebrow {
+      font-family:'Unbounded',sans-serif; font-size:11px;
+      letter-spacing:.25em; color:var(--accent);
+      text-transform:uppercase; margin-bottom:28px;
+    }
+    .hero-title {
+      font-family:'Unbounded',sans-serif;
+      font-size:clamp(36px,8vw,72px); font-weight:900; line-height:1.05; margin-bottom:20px;
+      background:linear-gradient(135deg,#fff 40%,var(--accent) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .hero-sub { color:var(--muted);font-size:17px;line-height:1.6;max-width:480px;margin-bottom:44px; }
+    .btn-primary {
+      display:inline-flex;align-items:center;gap:10px;
+      background:var(--accent);color:#fff;
+      font-family:'Onest',sans-serif;font-size:15px;font-weight:500;
+      padding:16px 32px;border:none;border-radius:100px;cursor:pointer;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .btn-primary:hover { transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,124,255,.35); }
+    .progress-track { height:3px;background:var(--surface2);border-radius:4px;margin-bottom:48px;overflow:hidden; }
+    .progress-fill {
+      height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));
+      border-radius:4px;transition:width .4s cubic-bezier(.34,1.56,.64,1);
+    }
+    .q-label {
+      font-family:'Unbounded',sans-serif;font-size:11px;
+      letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;
+    }
+    .q-text {
+      font-family:'Unbounded',sans-serif;
+      font-size:clamp(20px,4vw,28px);font-weight:700;line-height:1.25;margin-bottom:36px;
+    }
+    .choices { display:grid;gap:14px; }
+    .choice-btn {
+      display:flex;align-items:center;gap:16px;
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:16px;padding:20px 24px;cursor:pointer;
+      text-align:left;color:var(--text);font-family:'Onest',sans-serif;font-size:16px;
+      transition:border-color .2s,background .2s,transform .15s;width:100%;
+    }
+    .choice-btn:hover { border-color:var(--accent);background:rgba(79,124,255,.08);transform:translateX(4px); }
+    .choice-btn .icon { font-size:26px;flex-shrink:0;width:42px;text-align:center; }
+    .feed-header { display:flex;align-items:center;gap:12px;margin-bottom:32px; }
+    .feed-dot { width:10px;height:10px;border-radius:50%;background:var(--accent2);animation:pulse 1.5s ease infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.4);opacity:.6;} }
+    .feed-title { font-family:'Unbounded',sans-serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted); }
+    .news-card {
+      background:var(--surface);border:1px solid var(--border);border-radius:14px;
+      padding:20px 22px;margin-bottom:12px;opacity:0;transform:translateY(16px);
+      animation:cardIn .4s ease forwards;display:flex;align-items:flex-start;gap:14px;
+    }
+    .news-card.emotional { border-color:rgba(255,79,124,.3);background:rgba(255,79,124,.05); }
+    .news-card .nc-icon { font-size:22px;flex-shrink:0;margin-top:2px; }
+    .news-card .nc-text { font-size:15px;line-height:1.5; }
+    .news-card .nc-src  { font-size:12px;color:var(--muted);margin-top:4px; }
+    @keyframes cardIn { to { opacity:1;transform:translateY(0); } }
+    .reveal-wrap { margin-top:36px;text-align:center; }
+    .truth-label {
+      font-family:'Unbounded',sans-serif;font-size:11px;
+      letter-spacing:.25em;text-transform:uppercase;color:var(--accent3);margin-bottom:16px;
+    }
+    .truth-title { font-family:'Unbounded',sans-serif;font-size:clamp(28px,6vw,52px);font-weight:900;line-height:1.1;margin-bottom:20px; }
+    .gauge-wrap { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;margin:32px 0;text-align:center; }
+    .gauge-percent {
+      font-family:'Unbounded',sans-serif;font-size:72px;font-weight:900;line-height:1;
+      background:linear-gradient(135deg,var(--accent2),var(--accent));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;
+    }
+    .gauge-track { height:8px;background:var(--surface2);border-radius:8px;overflow:hidden;margin:20px auto;max-width:320px; }
+    .gauge-fill {
+      height:100%;border-radius:8px;
+      background:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2));
+      width:0%;transition:width 1.2s cubic-bezier(.34,1.2,.64,1);
+    }
+    .gauge-label { color:var(--muted);font-size:14px; }
+    .divider {
+      display:flex;align-items:center;gap:16px;margin:36px 0;
+      color:var(--muted);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    }
+    .divider::before,.divider::after { content:'';flex:1;height:1px;background:var(--border); }
+    .all-grid { display:grid;gap:10px; }
+    .all-card {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:16px 18px;font-size:14px;display:flex;align-items:center;gap:10px;
+      opacity:0;animation:cardIn .35s ease forwards;
+    }
+    .tag { font-size:10px;padding:3px 8px;border-radius:100px;font-weight:500;flex-shrink:0; }
+    .tag-calm  { background:rgba(79,255,176,.12);color:var(--accent3); }
+    .tag-mixed { background:rgba(79,124,255,.12);color:var(--accent); }
+    .tag-hot   { background:rgba(255,79,124,.12);color:var(--accent2); }
+    .insight {
+      background:var(--surface);border-left:3px solid var(--accent2);
+      border-radius:0 12px 12px 0;padding:22px 24px;margin:32px 0;
+      font-size:15px;line-height:1.65;color:#c8cfe0;
+    }
+    .insight strong { color:var(--text); }
+    .restart-wrap { text-align:center;margin-top:44px; }
+    .btn-ghost {
+      background:transparent;border:1px solid var(--border);color:var(--muted);
+      font-family:'Onest',sans-serif;font-size:14px;padding:12px 28px;
+      border-radius:100px;cursor:pointer;transition:border-color .2s,color .2s;
+    }
+    .btn-ghost:hover { border-color:var(--accent);color:var(--text); }
+  </style>
 </head>
-
 <body>
 
-<!-- background orbs -->
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 <div class="orb orb-3"></div>
 
 <div class="wrapper">
 
-  <!-- ══ START ══ -->
-  <div id="screen-start" class="screen">
-    <p class="hero-eyebrow">Медиаграмотность · Тест</p>
-    <h1 class="hero-title">Ты в информационном пузыре?</h1>
+  <!-- СТАРТ -->
+  <div id="screen-start" class="screen active">
+    <p class="hero-eyebrow">Медиасауаттылық · Тест</p>
+    <h1 class="hero-title">Сен ақпараттық көпіршікте ме?</h1>
     <p class="hero-sub">
-      Ответь на 4 вопроса — и мы покажем, какую версию реальности тебе строят алгоритмы.
+      4 сұраққа жауап бер — біз алгоритмдер саған қандай шындық нұсқасын жасап жатқанын көрсетеміз.
     </p>
     <button id="btn-start" class="btn-primary">
-      <span>Начать тест</span>
-      <span>→</span>
+      <span>Тестті бастау</span><span>→</span>
     </button>
   </div>
 
-  <!-- ══ TEST ══ -->
+  <!-- ТЕСТ -->
   <div id="screen-test" class="screen">
     <div class="progress-track">
       <div id="progress-fill" class="progress-fill" style="width:0%"></div>
     </div>
-    <p id="q-label" class="q-label">Вопрос 1 из 4</p>
+    <p id="q-label" class="q-label">1-сұрақ, 4-тен</p>
     <h2 id="q-text" class="q-text"></h2>
     <div id="choices" class="choices"></div>
   </div>
 
-  <!-- ══ FEED ══ -->
+  <!-- ТАСПА -->
   <div id="screen-feed" class="screen">
     <div class="feed-header">
       <div class="feed-dot"></div>
-      <span class="feed-title">Твоя персональная лента</span>
+      <span class="feed-title">Сенің жеке таспаң</span>
     </div>
     <div id="news-list"></div>
     <div class="reveal-wrap">
-      <p style="color: var(--muted); font-size:14px; margin-bottom:18px;">
-        Это то, что алгоритм подобрал для тебя.<br>Но это не вся картина.
+      <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">
+        Бұл алгоритм сен үшін таңдаған мазмұн.<br>Бірақ бұл толық сурет емес.
       </p>
-      <button id="btn-reveal" class="btn-primary">Показать реальность →</button>
+      <button id="btn-reveal" class="btn-primary">Шындықты көрсету →</button>
     </div>
   </div>
 
-  <!-- ══ TRUTH ══ -->
+  <!-- ШЫНДЫҚ -->
   <div id="screen-truth" class="screen">
-    <p class="truth-label">Результат</p>
-    <h2 class="truth-title">Твой пузырь</h2>
-
+    <p class="truth-label">Нәтиже</p>
+    <h2 class="truth-title">Сенің көпіршігің</h2>
     <div class="gauge-wrap">
       <div id="gauge-percent" class="gauge-percent">0%</div>
       <div class="gauge-track">
@@ -66,25 +198,159 @@
       </div>
       <div id="gauge-label" class="gauge-label"></div>
     </div>
-
-    <div class="divider">Полная картина новостей</div>
-
+    <div class="divider">Жаңалықтардың толық суреті</div>
     <div id="all-grid" class="all-grid"></div>
-
     <div class="insight" id="insight-text"></div>
-
-    <p style="color: var(--muted); font-size: 13px; text-align:center; line-height:1.6; margin-top: 28px;">
-      Алгоритмы TikTok, Instagram и YouTube делают именно это —<br>
-      показывают только то, на что ты уже реагировал раньше.
+    <p style="color:var(--muted);font-size:13px;text-align:center;line-height:1.6;margin-top:28px;">
+      TikTok, Instagram және YouTube алгоритмдері дәл осылай жасайды —<br>
+      тек бұрын реакция бергенің нәрсені ғана көрсетеді.
     </p>
-
     <div class="restart-wrap">
-      <button id="btn-restart" class="btn-ghost">↩ Пройти заново</button>
+      <button id="btn-restart" class="btn-ghost">↩ Қайтадан өту</button>
     </div>
   </div>
 
-</div><!-- /wrapper -->
+</div>
 
-<script src="bubble.js"></script>
+<script>
+const QUESTIONS = [
+  {
+    text: "Қай тақырыпты басасың?",
+    a: { icon:"🔥", label:"ШОК! Бұл барлығын мәңгіге өзгертеді", score:2 },
+    b: { icon:"📊", label:"Зерттеу күтпеген нәтиже көрсетті",    score:0 }
+  },
+  {
+    text: "Не оқығанды ұнатасың?",
+    a: { icon:"😱", label:"Жанжал, драма, қақтығыстар",           score:2 },
+    b: { icon:"📚", label:"Терең талдау және фактілер",           score:0 }
+  },
+  {
+    text: "Жаңалықтың көзін тексересің бе?",
+    a: { icon:"✅", label:"Иә, әрқашан",                           score:0 },
+    b: { icon:"🤷", label:"Сирек — сезімге сенемін",              score:1 }
+  },
+  {
+    text: "Келіспейтін постқа қалай реакция білдіресің?",
+    a: { icon:"💬", label:"Оқимын, ойланамын, кейде пікірімді өзгертемін", score:0 },
+    b: { icon:"🚫", label:"Жасырамын / елемеймін / ашуланамын",  score:2 }
+  }
+];
+
+const NEWS = {
+  calm: [
+    { icon:"🔬", text:"Әлеуметтік желілердің жасөспірімдер ұйқысына әсері туралы жаңа зерттеу", src:"nature.com" },
+    { icon:"🌍", text:"Ғалымдар Азиядағы орман өсімінің рекордтық деңгейін тіркеді",             src:"sciencedaily.com" },
+    { icon:"🤖", text:"Ұсыныс алгоритмдері қалай жұмыс істейді және неге қателеседі",           src:"wired.com" }
+  ],
+  mixed: [
+    { icon:"⚡", text:"Технологиялар еңбек нарығын өзгертуде — сандар мен болжамдар",  src:"bloomberg.com" },
+    { icon:"🧩", text:"Сарапшылар жасанды интеллектті реттеу бойынша пікір алышты",    src:"reuters.com" },
+    { icon:"❓", text:"ChatGPT туралы соңғы жаңалықтарда не шындық, не жалған",        src:"factcheck.org" }
+  ],
+  emotional: [
+    { icon:"🔥", text:"ШОК! Технологиялар 3 жылда жұмыс орындарының 50%-ін жояды", src:"vibemedia.kz",  hot:true },
+    { icon:"😱", text:"Бұл ЖАСЫРЫЛДЫ! 5G мен денсаулық туралы шындық",             src:"exposethem.net", hot:true },
+    { icon:"⚠️", text:"СЕН ҚАЗІР ҚАУІПТЕ — шұғыл оқы",                             src:"alarmpost.io",  hot:true }
+  ]
+};
+
+const ALL_NEWS = [
+  ...NEWS.calm.map(n     => ({...n, tag:"calm",  tagLabel:"Сабырлы"  })),
+  ...NEWS.mixed.map(n    => ({...n, tag:"mixed", tagLabel:"Бейтарап" })),
+  ...NEWS.emotional.map(n=> ({...n, tag:"hot",   tagLabel:"Клікбейт" }))
+];
+
+let score = 0, currentQ = 0;
+const $ = id => document.getElementById(id);
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+$('btn-start').addEventListener('click', () => {
+  score = 0; currentQ = 0;
+  renderQuestion();
+  show('screen-test');
+});
+$('btn-reveal').addEventListener('click', showTruth);
+$('btn-restart').addEventListener('click', () => show('screen-start'));
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  $('q-label').textContent = `${currentQ + 1}-сұрақ, ${QUESTIONS.length}-тен`;
+  $('q-text').textContent = q.text;
+  $('progress-fill').style.width = (currentQ / QUESTIONS.length * 100) + '%';
+  const choices = $('choices');
+  choices.innerHTML = '';
+  [q.a, q.b].forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="icon">${opt.icon}</span><span>${opt.label}</span>`;
+    btn.addEventListener('click', () => {
+      score += opt.score; currentQ++;
+      if (currentQ < QUESTIONS.length) {
+        renderQuestion();
+      } else {
+        $('progress-fill').style.width = '100%';
+        setTimeout(showFeed, 300);
+      }
+    });
+    choices.appendChild(btn);
+  });
+}
+
+function showFeed() {
+  const type = score <= 2 ? 'calm' : score <= 4 ? 'mixed' : 'emotional';
+  const list = $('news-list');
+  list.innerHTML = '';
+  NEWS[type].forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'news-card' + (item.hot ? ' emotional' : '');
+    card.style.animationDelay = (i * 0.12) + 's';
+    card.innerHTML = `<span class="nc-icon">${item.icon}</span>
+      <div><div class="nc-text">${item.text}</div>
+      <div class="nc-src">${item.src}</div></div>`;
+    list.appendChild(card);
+  });
+  show('screen-feed');
+}
+
+function showTruth() {
+  const maxScore = QUESTIONS.reduce((s,q) => s + Math.max(q.a.score, q.b.score), 0);
+  const percent = Math.round((score / maxScore) * 100);
+  $('gauge-percent').textContent = percent + '%';
+  $('gauge-label').textContent = getBubbleLabel(percent);
+  const grid = $('all-grid');
+  grid.innerHTML = '';
+  ALL_NEWS.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'all-card';
+    card.style.animationDelay = (i * 0.07) + 's';
+    card.innerHTML = `<span>${item.icon}</span>
+      <span style="flex:1">${item.text}</span>
+      <span class="tag tag-${item.tag}">${item.tagLabel}</span>`;
+    grid.appendChild(card);
+  });
+  $('insight-text').innerHTML = getInsight(percent);
+  show('screen-truth');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('gauge-fill').style.width = percent + '%';
+  }));
+}
+
+function getBubbleLabel(p) {
+  if (p <= 20) return "Көпіршік жоқ дерлік — ашық көзқарас";
+  if (p <= 50) return "Жеңіл көпіршік — кейде шындықты сүзгіден өткізесің";
+  if (p <= 75) return "Байқалатын көпіршік — алгоритмдер сені жақсы біледі";
+  return "Тығыз көпіршік — тек көргісі келгенін көреді";
+}
+
+function getInsight(p) {
+  if (p <= 20) return `<strong>Сен сыни ойлайсың.</strong> Бірақ есте сақта: көпіршік байқаусызда қалыптасады. Тіпті ең саналы пайдаланушылар да уақыт өте оған түседі — алгоритмдер біз ойлағаннан да шыдамдырақ.`;
+  if (p <= 50) return `<strong>Орташа көпіршік.</strong> Сен фактілерден бас тартпайсың, бірақ эмоционалды тақырыптар сені тартады. TikTok, YouTube және Instagram алгоритмдері дәл осыны пайдаланады — олар назарыңның секундтарынан үйренеді.`;
+  return `<strong>Алгоритмдер сені түсінді.</strong> Олар сені не тартатынын әлдеқашан білді — және мұны қайта-қайта көрсетеді. Бұл конспирация емес: жай ғана кликтер математикасы. Қарама-қарсы көзқарастарды саналы түрде іздеп көр.`;
+}
+</script>
 </body>
 </html>
