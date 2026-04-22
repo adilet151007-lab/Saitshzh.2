@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ты в пузыре?</title>
+  <link rel="stylesheet" href="bubble.css">
+</head>
+
+<body>
+
+<!-- background orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="wrapper">
+
+  <!-- ══ START ══ -->
+  <div id="screen-start" class="screen">
+    <p class="hero-eyebrow">Медиаграмотность · Тест</p>
+    <h1 class="hero-title">Ты в информационном пузыре?</h1>
+    <p class="hero-sub">
+      Ответь на 4 вопроса — и мы покажем, какую версию реальности тебе строят алгоритмы.
+    </p>
+    <button id="btn-start" class="btn-primary">
+      <span>Начать тест</span>
+      <span>→</span>
+    </button>
+  </div>
+
+  <!-- ══ TEST ══ -->
+  <div id="screen-test" class="screen">
+    <div class="progress-track">
+      <div id="progress-fill" class="progress-fill" style="width:0%"></div>
+    </div>
+    <p id="q-label" class="q-label">Вопрос 1 из 4</p>
+    <h2 id="q-text" class="q-text"></h2>
+    <div id="choices" class="choices"></div>
+  </div>
+
+  <!-- ══ FEED ══ -->
+  <div id="screen-feed" class="screen">
+    <div class="feed-header">
+      <div class="feed-dot"></div>
+      <span class="feed-title">Твоя персональная лента</span>
+    </div>
+    <div id="news-list"></div>
+    <div class="reveal-wrap">
+      <p style="color: var(--muted); font-size:14px; margin-bottom:18px;">
+        Это то, что алгоритм подобрал для тебя.<br>Но это не вся картина.
+      </p>
+      <button id="btn-reveal" class="btn-primary">Показать реальность →</button>
+    </div>
+  </div>
+
+  <!-- ══ TRUTH ══ -->
+  <div id="screen-truth" class="screen">
+    <p class="truth-label">Результат</p>
+    <h2 class="truth-title">Твой пузырь</h2>
+
+    <div class="gauge-wrap">
+      <div id="gauge-percent" class="gauge-percent">0%</div>
+      <div class="gauge-track">
+        <div id="gauge-fill" class="gauge-fill"></div>
+      </div>
+      <div id="gauge-label" class="gauge-label"></div>
+    </div>
+
+    <div class="divider">Полная картина новостей</div>
+
+    <div id="all-grid" class="all-grid"></div>
+
+    <div class="insight" id="insight-text"></div>
+
+    <p style="color: var(--muted); font-size: 13px; text-align:center; line-height:1.6; margin-top: 28px;">
+      Алгоритмы TikTok, Instagram и YouTube делают именно это —<br>
+      показывают только то, на что ты уже реагировал раньше.
+    </p>
+
+    <div class="restart-wrap">
+      <button id="btn-restart" class="btn-ghost">↩ Пройти заново</button>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script src="bubble.js"></script>
+</body>
+</html>
