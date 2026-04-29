@@ -155,7 +155,7 @@
     <p class="hero-eyebrow">Медиасауаттылық · Тест</p>
     <h1 class="hero-title">Сен ақпараттық көпіршікте ме?</h1>
     <p class="hero-sub">
-      4 сұраққа жауап бер — біз алгоритмдер саған қандай шындық нұсқасын жасап жатқанын көрсетеміз.
+      10 сұраққа жауап бер — біз алгоритмдер саған қандай шындық нұсқасын жасап жатқанын көрсетеміз.
     </p>
     <button id="btn-start" class="btn-primary">
       <span>Тестті бастау</span><span>→</span>
@@ -167,7 +167,7 @@
     <div class="progress-track">
       <div id="progress-fill" class="progress-fill" style="width:0%"></div>
     </div>
-    <p id="q-label" class="q-label">1-сұрақ, 4-тен</p>
+    <p id="q-label" class="q-label">1-сұрақ, 10-нан</p>
     <h2 id="q-text" class="q-text"></h2>
     <div id="choices" class="choices"></div>
   </div>
@@ -233,6 +233,36 @@ const QUESTIONS = [
     text: "Келіспейтін постқа қалай реакция білдіресің?",
     a: { icon:"💬", label:"Оқимын, ойланамын, кейде пікірімді өзгертемін", score:0 },
     b: { icon:"🚫", label:"Жасырамын / елемеймін / ашуланамын",  score:2 }
+  },
+  {
+    text: "Досың саған мүлде бөлек пікір жіберді. Сенің әрекетің?",
+    a: { icon:"🧐", label:"Қызықты — неге олай ойлайды деп ойланамын", score:0 },
+    b: { icon:"🙄", label:"Сенбеймін, бірден жабамын",                  score:2 }
+  },
+  {
+    text: "Жаңалықты қайдан аласың?",
+    a: { icon:"📰", label:"Бірнеше түрлі сайт пен газеттен",      score:0 },
+    b: { icon:"📱", label:"Тек өз таспамнан — TikTok, Instagram", score:2 }
+  },
+  {
+    text: "Алгоритм саған не ұсынады деп ойлайсың?",
+    a: { icon:"🎯", label:"Мені қызықтыратын нәрсені ғана",       score:2 },
+    b: { icon:"🌐", label:"Маңызды жаңалықтарды жалпы",           score:0 }
+  },
+  {
+    text: "Бейтаныс адам сенің пікіріңмен келіспесе?",
+    a: { icon:"⚔️", label:"Дауласамын — өзімді дәлелдеуім керек", score:2 },
+    b: { icon:"🤝", label:"Тыңдаймын — мүмкін олар дұрыс шығар", score:0 }
+  },
+  {
+    text: "\"Барлық бұқаралық ақпарат құралдары өтірік айтады\" деген сөзге не дейсің?",
+    a: { icon:"👍", label:"Рас, ешкімге сенуге болмайды",          score:2 },
+    b: { icon:"🔍", label:"Жоқ, дереккөзді таңдай білу керек",    score:0 }
+  },
+  {
+    text: "Бір аптада қанша түрлі пікірді оқисың?",
+    a: { icon:"🌈", label:"Көп — қарама-қарсы тараптарды да қарайм", score:0 },
+    b: { icon:"🔁", label:"Бір ғана — өзіме ұнайтын",               score:2 }
   }
 ];
 
@@ -278,7 +308,7 @@ $('btn-restart').addEventListener('click', () => show('screen-start'));
 
 function renderQuestion() {
   const q = QUESTIONS[currentQ];
-  $('q-label').textContent = `${currentQ + 1}-сұрақ, ${QUESTIONS.length}-тен`;
+  $('q-label').textContent = `${currentQ + 1}-сұрақ, ${QUESTIONS.length}-нан`;
   $('q-text').textContent = q.text;
   $('progress-fill').style.width = (currentQ / QUESTIONS.length * 100) + '%';
   const choices = $('choices');
@@ -301,7 +331,7 @@ function renderQuestion() {
 }
 
 function showFeed() {
-  const type = score <= 2 ? 'calm' : score <= 4 ? 'mixed' : 'emotional';
+  const type = score <= 4 ? 'calm' : score <= 9 ? 'mixed' : 'emotional';
   const list = $('news-list');
   list.innerHTML = '';
   NEWS[type].forEach((item, i) => {
